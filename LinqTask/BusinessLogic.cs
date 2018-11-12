@@ -13,7 +13,7 @@ namespace LinqTask
         {
             //наполнение обеих коллекций тестовыми данными
             users.Add(new User(1, "Alexander", "Smirnov"));
-            users.Add(new User(2, "Mark", "Filippov"));
+            users.Add(new User(2, "Mark", "Philippov"));
             users.Add(new User(3, "Vyacheslav", "Borodkin"));
             users.Add(new User(4, "Feodor", "Zhilkin"));
             users.Add(new User(5, "Stepan", "Litvinov"));
