@@ -1,24 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LinqTask
 {
-    class User
+    /// <summary>
+    /// Class to store user information.
+    /// </summary>
+    public class User : IEquatable<User>
     {
         public int ID { get; set; }
-        public String Name { get; set; }
-        public String Surname { get; set; }
-        public User(int id, String name, String surname)
+        public string Name { get; set; }
+        public string Surname { get; set; }
+
+        public User(int id, string name, string surname)
         {
-            this.ID = id;
-            this.Name = name;
-            this.Surname = surname;
+            ID = id;
+            Name = name;
+            Surname = surname;
         }
+
         public override string ToString()
         {
             return string.Format("ID={0}: {1} {2}", ID, Name, Surname);
         }
 
+        public bool Equals(User other)
+        {
+            return (this.ID == other.ID) && (this.Name == other.Name) && (this.Surname == other.Surname);
+        }
     }
 }

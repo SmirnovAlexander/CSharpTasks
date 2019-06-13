@@ -1,35 +1,66 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LinqTask
 {
+    /// <summary>
+    /// Class to communicate with user.
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
         {
+            // Initializing users and records lists.
+            List<User> users = new List<User>();
+            List<Record> records = new List<Record>();
 
-            BusinessLogic bl = new BusinessLogic();
+            // Filling lists with test data.
+            users.Add(new User(1, "Alexander", "Smirnov"));
+            users.Add(new User(2, "Mark", "Philippov"));
+            users.Add(new User(3, "Vyacheslav", "Borodkin"));
+            users.Add(new User(4, "Feodor", "Zhilkin"));
+            users.Add(new User(5, "Stepan", "Litvinov"));
+            users.Add(new User(6, "Lut", "Smirnov"));
+            users.Add(new User(7, "Feodor", "Kupriyanov"));
+
+            records.Add(new Record(users[0], "Hello"));
+            records.Add(new Record(users[1], "How are you?"));
+            records.Add(new Record(users[2], "Fine, thanks"));
+            records.Add(new Record(users[3], "Me too"));
+            records.Add(new Record(users[4], "Good"));
+            records.Add(new Record(users[4], "Goobye!"));
+
+            // Initializing BusinessLogic instance.
+            var bl = new BusinessLogic(users, records);
 
             Console.WriteLine("LinqTask");
             Console.WriteLine("----------");
 
+            // Print user list.
             Console.WriteLine("Users list: ");
             foreach (var user in bl.users)
             {
                 Console.WriteLine(user);
             }
 
+            // Print records list.
             Console.WriteLine("Record list: ");
             foreach (var record in bl.records)
             {
                 Console.WriteLine(record);
             }
 
+            // Initialize an input variable.
             string input;
+
+            // Print menu.
             MenuPrint();
 
             while (true)
             {
+                // Reading input.
                 input = Console.ReadLine();
+
                 if (input == "1")
                 {
                     Console.WriteLine("Введите фамилию: ");
@@ -117,6 +148,7 @@ namespace LinqTask
             Console.ReadKey();
         }
 
+        // Printing menu.
         static void MenuPrint()
         {
             Console.WriteLine("-----*MENU*-----");
@@ -133,10 +165,6 @@ namespace LinqTask
             Console.WriteLine("11: Пейджинг");
             Console.WriteLine("0: Выйти из программы");
             Console.WriteLine("----------------");
-
         }
-
-
-
     }
 }
