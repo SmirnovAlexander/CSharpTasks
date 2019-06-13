@@ -2,5 +2,6 @@ image: Visual Studio 2017
 
 build_script: 
     - For /R %%I in (*.sln) do dotnet test %%I
+    - For /R %%I in (*.sln) do dotnet build %%I
 
 test: off
