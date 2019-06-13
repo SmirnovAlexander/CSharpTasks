@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace FictionLoadingApp
 {
-    public class Program
+    public class FictionLoadingApp
     {
         static void Main(string[] args)
         {
-            //Initializing a welcomescreen element
+            // Initializing a welcomescreen element.
             WelcomeScreen menu = new WelcomeScreen();
 
-            //Creating an input parameters
-            bool internetConnection = false;
+            // Creating an input parameters.
+            bool internetConnection = true;
             bool isThereALicence = true;
             bool isThereAnUpdate = true;
 
@@ -22,7 +22,7 @@ namespace FictionLoadingApp
             //static bool isThereALicence = NextBool();
             //static bool isThereAnUpdate = NextBool(60);
 
-            //Initializing tokens
+            // Initializing tokens.
             CancellationTokenSource licenceCancellationTokenSourse = new CancellationTokenSource();
             CancellationTokenSource updateCancellationTokenSourse = new CancellationTokenSource();
             CancellationTokenSource internetCancellationTokenSourse = new CancellationTokenSource();
@@ -36,7 +36,7 @@ namespace FictionLoadingApp
             if (internetConnection != true)
                 internetCancellationTokenSourse.Cancel();
 
-            //Отрисовка Splash Screen
+            // Printing splash screen.
             Task ShowSplash = new Task(() =>
             {
                 Console.WriteLine(Consts.splashScreenString);
@@ -45,22 +45,23 @@ namespace FictionLoadingApp
             ShowSplash.Start();
 
 
-            //---ПРОВЕРКА ИНТЕРНЕТА---
+            //-----Internet check-----
 
-            //Пишем, что сейчас будем проверять наличие интернета (ждёт отрисовки сплэш скрина)
+            // Write, that now we will check for connection.
+            // Wait for splash screen.
             Task WriTeInternetCheck = ShowSplash.ContinueWith(ant =>
             {
                 Console.WriteLine(Consts.CheckInternet);
             });
 
-            //Проверка интернета (ждёт отрисовки надписи)
+            // Internet check. Wait printing.
             Task InternetCheck = WriTeInternetCheck.ContinueWith(ant =>
             {
                 menu.internetConnection = true;
                 Console.WriteLine(Consts.YESinternet);
             }, internetToken);
 
-            //Уведомление при отсутствии интернета         
+            // Notification if no internet.      
             Task NoInternet = InternetCheck.ContinueWith(ant =>
             {
                 Thread.Sleep(3000);
@@ -70,15 +71,15 @@ namespace FictionLoadingApp
             }, TaskContinuationOptions.OnlyOnCanceled);
 
 
-            //---ПРОВЕРКА ЛИЦЕНЗИИ---
+            //-----Licence check-----
 
-            //Пишем, что сейчас будем проверять наличие лицензии (ждёт положительного ответа наличия интернета)
+            // Write that now we will check licence (waiting internet availability).
             Task WriTeLicenceCheck = InternetCheck.ContinueWith(ant =>
             {
                 Console.WriteLine(Consts.licenceRequesting);
             }, TaskContinuationOptions.NotOnCanceled);
 
-            //Запрос лицензии (ждёт положительного ответа наличия интернета)
+            // Licence request.
             Task RequestLicence = InternetCheck.ContinueWith(ant =>
             {
                 Thread.Sleep(5000);
@@ -88,7 +89,7 @@ namespace FictionLoadingApp
                 Thread.Sleep(3000);
             }, licenceToken, TaskContinuationOptions.NotOnCanceled, TaskScheduler.Default);
 
-            //Уведомление при отсутствии лицензии 
+            // Notification if no request.
             Task NoLicence = RequestLicence.ContinueWith(ant =>
             {
                 Thread.Sleep(5000);
@@ -96,18 +97,18 @@ namespace FictionLoadingApp
                 Console.WriteLine(Consts.licenceRequestingEnd);
                 Console.WriteLine(Consts.donthaveALicence);
                 Thread.Sleep(3000);
-            }, TaskContinuationOptions.OnlyOnFaulted); //Где условие что только при выполнении этой таски и ее отмены а не просто оттмены
+            }, TaskContinuationOptions.OnlyOnFaulted);
 
 
-            //---ПРОВЕРКА АПДЕЙТА---
+            //-----Update availability-----
 
-            //Пишем, что сейчас будем проверять наличие обновлений (ждёт положительного ответа наличия интернета)
+            // Write that now we will check for updates (waiting internet access true).
             Task WriTeUpdateCheck = InternetCheck.ContinueWith(ant =>
             {
                 Console.WriteLine(Consts.updateRequesting);
             }, TaskContinuationOptions.NotOnCanceled);
 
-            //Запрос обновления
+            // Update request.
             Task RequestUpdate = WriTeUpdateCheck.ContinueWith(ant =>
             {
 
@@ -117,7 +118,7 @@ namespace FictionLoadingApp
                 Console.WriteLine(Consts.updateIsHere);
             }, updateToken, TaskContinuationOptions.NotOnCanceled, TaskScheduler.Default);
 
-            //Уведомление при отсутствии апдейта 
+            // Notification if no update.
             Task NoUpdate = RequestUpdate.ContinueWith(ant =>
             {
                 Thread.Sleep(3000);
@@ -127,7 +128,7 @@ namespace FictionLoadingApp
                 Thread.Sleep(3000);
             }, TaskContinuationOptions.OnlyOnFaulted);
 
-            //Обновление
+            // Updating.
             Task Update = RequestUpdate.ContinueWith(ant =>
             {
                 Console.WriteLine(Consts.updateDownloading);
@@ -137,16 +138,16 @@ namespace FictionLoadingApp
             }, TaskContinuationOptions.NotOnCanceled);
 
 
-            //---MENU SCREEN---
+            //-----Menu screen-----
 
-            //Printing menu
+            // Printing menu.
             Action menuprint = () =>
             {
                 Console.Clear();
                 menu.DrawMenu();
             };
 
-            //Waiting for update and licence
+            // Waiting for update and licence.
             Task print1 = Task.Factory.ContinueWhenAll(new[] { NoInternet, RequestUpdate, InternetCheck, RequestLicence }, tasks =>
             {
                 menuprint();
@@ -155,16 +156,17 @@ namespace FictionLoadingApp
             Console.ReadKey();
         }
 
-        //Принимает количество процентов (1-100) на выпадение true
+        // Gets percentage (1-100) on return true.
         public static bool NextBool(int truePercentage = 50)
         {
             Random r = new Random();
             return r.NextDouble() < truePercentage / 100.0;
         }
-
     }
 
-    //Меню
+    /// <summary>
+    /// Drawing menu class.
+    /// </summary>
     public class WelcomeScreen
     {
         public bool isThereALicence;
@@ -199,26 +201,28 @@ namespace FictionLoadingApp
             {
                 Console.WriteLine(Consts.NOkekInternet);
             }
-
         }
-
     }
 
-    //Все константы
+    /// <summary>
+    /// All constants.
+    /// </summary>
     public class Consts
     {
-        //Screens
+        // Screens.
         public const string divisionString = "------------------------------";
         public const string splashScreenString = "Splash Screen";
         public const string menuScreenString = "Menu Screen";
-        //Licece
+       
+        // Licece.
         public const string licenceRequesting = "Requesting Licence...";
         public const string licenceRequestingEnd = "Licence Requesting is finished!";
         public const string haveALicence = "You have a licence!";
         public const string donthaveALicence = "You don't have a licence!";
         public const string YESlicence = "Your program is licenced";
         public const string NOlicence = "Your program is not licenced";
-        //Update
+       
+        // Update.
         public const string updateRequesting = "Requesting Update...";
         public const string updateRequestingEnd = "Update Requesting is finished!";
         public const string YESupdate = "Your program is updated";
@@ -227,40 +231,11 @@ namespace FictionLoadingApp
         public const string updateIsNotHere = "There is no update";
         public const string updateDownloading = "Downloading update...";
         public const string updateDownloadingFinished = "Downloading update finished!";
-        //Intenet
+        
+        // Intenet.
         public const string NOinternet = "There's no internet connection, so it is not available to check your license and update";
         public const string CheckInternet = "Watching if there is an internet...";
         public const string YESinternet = "Internet connection established";
         public const string NOkekInternet = "No signal";
     }
-
-
-
-
-    //Spinner
-    public class ConsoleSpiner
-    {
-        int counter;
-        public ConsoleSpiner()
-        {
-            counter = 0;
-        }
-        public void Turn()
-        {
-            while (true)
-            {
-                counter++;
-                switch (counter % 4)
-                {
-                    case 0: Console.Write("/"); break;
-                    case 1: Console.Write("-"); break;
-                    case 2: Console.Write("\\"); break;
-                    case 3: Console.Write("|"); break;
-                }
-                Thread.Sleep(200);
-                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
-            }
-        }
-    }
-
 }
